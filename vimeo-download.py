@@ -167,10 +167,15 @@ if __name__ == "__main__":
         # get the content
         resp = requests.get(master_json_url)
         if resp.status_code != 200:
-            match = re.search('<TITLE>(.+)<\/TITLE>', resp.content, re.IGNORECASE)
-            title = match.group(1)
-            print('HTTP error (' + str(resp.status_code) + '): ' + title)
-            quit(0)
+            if resp.status_code==410:
+                print('HTTP error 410 GONE')
+                quit(0)
+            else:
+                match = re.search('<TITLE>(.+)<\/TITLE>', resp.content, re.IGNORECASE)
+                title = match.group(1)
+                print('HTTP error (' + str(resp.status_code) + '): ' + title)
+                quit(0)               
+          
         content = resp.json()
         base_url = urlparse.urljoin(master_json_url, content['base_url'])
 
